@@ -2432,6 +2432,15 @@ config ARCH_BOARD_XMC4700RELAX
 	---help---
 		Infineon XMC4700 Relax
 
+config ARCH_BOARD_MX8MN_DDR3L_EVK
+	bool "i.MX8MN DDR3L EVK"
+	depends on ARCH_CHIP_MX8MN
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
+	---help---
+		i.MX8MN DDR3L EVK
+
 config ARCH_BOARD_Z16F2800100ZCOG
 	bool "Zilog Z16F2800100ZCOG Development Kit"
 	depends on ARCH_CHIP_Z16F2811
@@ -2845,6 +2854,7 @@ config ARCH_BOARD
 	default "viewtool-stm32f107"       if ARCH_BOARD_VIEWTOOL_STM32F107
 	default "xmc4500-relax"            if ARCH_BOARD_XMC4500RELAX
 	default "xmc4700-relax"            if ARCH_BOARD_XMC4700RELAX
+	default "mx8mn-ddr3l-evk"          if ARCH_BOARD_MX8MN_DDR3L_EVK
 	default "z16f2800100zcog"          if ARCH_BOARD_Z16F2800100ZCOG
 	default "z20x"                     if ARCH_BOARD_Z20X
 	default "z80sim"                   if ARCH_BOARD_Z80SIM

@@ -58,3 +58,7 @@ uImage
 .dirlinks
 .vscode
 .DS_Store
+
+# Debug
+debug/
+.gdb_*

@@ -48,14 +48,12 @@
 #  include <nuttx/fs/fs.h>
 #endif
 
-#ifdef CONFIG_FS_ROMFS
 #include <nuttx/drivers/ramdisk.h> // For romdisk_register
 #include <sys/mount.h>             // For mount()
 
 /* These symbols are provided by the generated nsh_romfsimg.c */
 extern uint8_t romfs_img[];
 extern uint32_t romfs_img_len;
-#endif
 
 /****************************************************************************
  * Public Functions
@@ -158,7 +156,6 @@ int mx8mn_bringup(void)
     }
 #endif
 
-#ifdef CONFIG_FS_ROMFS
   /* 1. Register the ROM disk /dev/ram0 using the image in memory */
   /* We use a 512 byte sector size */
   ret = romdisk_register(0, (uint8_t *)romfs_img, 
@@ -176,7 +173,6 @@ int mx8mn_bringup(void)
           syslog(LOG_ERR, "ERROR: Failed to mount ROMFS at /etc: %d\n", ret);
         }
     }
-#endif   
 
   return ret;
 }

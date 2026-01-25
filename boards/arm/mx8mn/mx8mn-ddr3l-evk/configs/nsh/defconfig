@@ -143,3 +143,8 @@ CONFIG_TESTING_OSTEST=y
 ###############################
 # CONFIG_BUILD_PROTECTED=n
 # CONFIG_BUILD_FLAT=y
+
+###############################
+# Board late initialization
+###############################
+CONFIG_BOARD_LATE_INITIALIZE=y

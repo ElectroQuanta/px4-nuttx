@@ -48,13 +48,6 @@
 #  include <nuttx/fs/fs.h>
 #endif
 
-#include <nuttx/drivers/ramdisk.h> // For romdisk_register
-#include <sys/mount.h>             // For mount()
-
-/* These symbols are provided by the generated nsh_romfsimg.c */
-extern uint8_t romfs_img[];
-extern uint32_t romfs_img_len;
-
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
@@ -155,24 +148,6 @@ int mx8mn_bringup(void)
       syslog(LOG_ERR, "ERROR: spidev_initialize() failed: %d\n", ret);
     }
 #endif
-
-  /* 1. Register the ROM disk /dev/ram0 using the image in memory */
-  /* We use a 512 byte sector size */
-  ret = romdisk_register(0, (uint8_t *)romfs_img, 
-                         (romfs_img_len + 511) / 512, 512);
-  if (ret < 0)
-    {
-      syslog(LOG_ERR, "ERROR: romdisk_register failed: %d\n", ret);
-    }
-  else
-    {
-      /* 2. Mount the ROMFS at /etc */
-      ret = nx_mount("/dev/ram0", "/etc", "romfs", MS_RDONLY, NULL);
-      if (ret < 0)
-        {
-          syslog(LOG_ERR, "ERROR: Failed to mount ROMFS at /etc: %d\n", ret);
-        }
-    }
 
   return ret;
 }

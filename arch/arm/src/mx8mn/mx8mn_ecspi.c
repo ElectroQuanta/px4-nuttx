@@ -156,7 +156,7 @@ static const struct spi_ops_s g_spi2_ops =
 #endif
 };
 
-static struct mx8mn_spi_s g_spi1_dev =
+static struct mx8mn_spi_s g_spi2_dev =
 {
   .dev.ops    = &g_spi2_ops,
   .base       = MX8M_ECSPI2,

@@ -101,7 +101,7 @@ int mx8mn_spidev_initialize(void)
   ret = board_spidev_initialize(1);
   if (ret < 0)
     {
-      syslog(LOG_ERR, "Failed to initialize I2C1.\n");
+      syslog(LOG_ERR, "Failed to initialize SPI1.\n");
       return ret;
     }
 #endif
@@ -116,7 +116,7 @@ int mx8mn_spidev_initialize(void)
   ret = board_spidev_initialize(2);
   if (ret < 0)
     {
-      syslog(LOG_ERR, "Failed to initialize I2C2.\n");
+      syslog(LOG_ERR, "Failed to initialize SPI2.\n");
       return ret;
     }
 #endif
@@ -131,7 +131,7 @@ int mx8mn_spidev_initialize(void)
   ret = board_spidev_initialize(3);
   if (ret < 0)
     {
-      syslog(LOG_ERR, "Failed to initialize I2C3.\n");
+      syslog(LOG_ERR, "Failed to initialize SPI3.\n");
       return ret;
     }
 #endif

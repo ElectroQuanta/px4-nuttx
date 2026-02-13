@@ -149,3 +149,30 @@ CONFIG_TESTING_OSTEST=y
 # Board late initialization
 ###############################
 CONFIG_BOARD_LATE_INITIALIZE=y
+
+###############################
+# SPI
+###############################
+CONFIG_MX8MN_SPI=y
+CONFIG_MX8MN_SPI1=y
+CONFIG_MX8MN_SPI2=y
+# CONFIG_MX8MN_SPI3 is not set
+CONFIG_MX8MN_SPI_DRIVER=y
+# CONFIG_ARCH_HAVE_SPI_CRCGENERATION is not set
+# CONFIG_ARCH_HAVE_SPI_CS_CONTROL is not set
+# CONFIG_ARCH_HAVE_SPI_BITORDER is not set
+CONFIG_SPI=y
+# CONFIG_SPI_SLAVE is not set
+CONFIG_SPI_EXCHANGE=y
+# CONFIG_SPI_CMDDATA is not set
+# CONFIG_SPI_CALLBACK is not set
+# CONFIG_SPI_HWFEATURES is not set
+# CONFIG_SPI_DELAY_CONTROL is not set
+# CONFIG_SPI_TRIGGER is not set
+CONFIG_SPI_DRIVER=y
+# CONFIG_SPI_BITBANG is not set
+# CONFIG_SPI_FLASH is not set
+# CONFIG_QSPI_FLASH is not set
+# CONFIG_SENSORS_LSM330SPI is not set
+# CONFIG_EXAMPLES_LSM330SPI_TEST is not set
+# CONFIG_SYSTEM_SPITOOL is not set

@@ -162,7 +162,6 @@ int mx8mn_gpio_irq_attach(gpio_pinset_t pinset, xcpt_t func, void *arg)
   struct mx8mn_gpio_s *cfg;
   uint32_t port = (pinset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
   uint32_t pin  = (pinset & GPIO_PIN_MASK) >> GPIO_PIN_SHIFT;
-  int irq_base;
   int pin_index;
 
   /* 1. Select the correct configuration struct based on Port and Pin (High/Low) */

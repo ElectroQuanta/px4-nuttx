@@ -258,12 +258,13 @@ static char g_uart4txbuffer[CONFIG_UART4_TXBUFSIZE];
 #endif
 
 #ifdef CONFIG_MX8MN_UART1
-static struct mx8mn_uart_s g_uart1priv =
-{
-  .clock          = UART1_CLK_ROOT,
-  .uartbase       = MX8M_UART1,
-  .baud           = CONFIG_UART1_BAUD,
+static struct mx8mn_uart_s g_uart1priv = {
+  .clock = UART1_CLK_ROOT,
+  .uartbase = MX8M_UART1,
+  .baud = CONFIG_UART1_BAUD,
+#ifdef CONFIG_SMP
   .lock           = SP_UNLOCKED,
+#endif
   .irq            = MX8MN_IRQ_UART1,
   .parity         = CONFIG_UART1_PARITY,
   .bits           = CONFIG_UART1_BITS,
@@ -293,7 +294,9 @@ static struct mx8mn_uart_s g_uart2priv =
   .clock          = UART2_CLK_ROOT,
   .uartbase       = MX8M_UART2,
   .baud           = CONFIG_UART2_BAUD,
+#ifdef CONFIG_SMP
   .lock           = SP_UNLOCKED,
+#endif
   .irq            = MX8MN_IRQ_UART2,
   .parity         = CONFIG_UART2_PARITY,
   .bits           = CONFIG_UART2_BITS,
@@ -323,7 +326,9 @@ static struct mx8mn_uart_s g_uart3priv =
   .clock          = UART3_CLK_ROOT,
   .uartbase       = MX8M_UART3,
   .baud           = CONFIG_UART3_BAUD,
+#ifdef CONFIG_SMP
   .lock           = SP_UNLOCKED,
+#endif
   .irq            = MX8MN_IRQ_UART3,
   .parity         = CONFIG_UART3_PARITY,
   .bits           = CONFIG_UART3_BITS,
@@ -353,7 +358,9 @@ static struct mx8mn_uart_s g_uart4priv =
   .clock          = UART4_CLK_ROOT,
   .uartbase       = MX8M_UART4,
   .baud           = CONFIG_UART4_BAUD,
-  /* .lock           = SP_UNLOCKED, */
+#ifdef CONFIG_SMP
+  .lock           = SP_UNLOCKED,
+#endif
   .irq            = MX8MN_IRQ_UART4,
   .parity         = CONFIG_UART4_PARITY,
   .bits           = CONFIG_UART4_BITS,

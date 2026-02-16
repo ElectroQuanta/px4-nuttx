@@ -150,6 +150,73 @@ static struct mx8mn_gpio_s g_gpio5_h =
 };
 
 /****************************************************************************
+ * Name: mx8mn_gpio_irq_attach
+ *
+ * Description:
+ * Attach a user callback to a GPIO interrupt.
+ *
+ ****************************************************************************/
+
+int mx8mn_gpio_irq_attach(gpio_pinset_t pinset, xcpt_t func, void *arg)
+{
+  struct mx8mn_gpio_s *cfg;
+  uint32_t port = (pinset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
+  uint32_t pin  = (pinset & GPIO_PIN_MASK) >> GPIO_PIN_SHIFT;
+  int irq_base;
+  int pin_index;
+
+  /* 1. Select the correct configuration struct based on Port and Pin (High/Low) */
+  
+  if (pin < 16)
+    {
+      /* Low group (Pins 0-15) */
+      pin_index = pin;
+      switch (port)
+        {
+          case 0: cfg = &g_gpio1_l; break; /* Port 1 (Index 0) */
+          case 1: cfg = &g_gpio2_l; break;
+          case 2: cfg = &g_gpio3_l; break;
+          case 3: cfg = &g_gpio4_l; break;
+          case 4: cfg = &g_gpio5_l; break;
+          default: return -EINVAL;
+        }
+    }
+  else
+    {
+      /* High group (Pins 16-31) */
+      pin_index = pin - 16;
+      switch (port)
+        {
+          case 0: cfg = &g_gpio1_h; break;
+          case 1: cfg = &g_gpio2_h; break;
+          case 2: cfg = &g_gpio3_h; break;
+          case 3: cfg = &g_gpio4_h; break;
+          case 4: cfg = &g_gpio5_h; break;
+          default: return -EINVAL;
+        }
+    }
+
+  /* 2. Calculate the Virtual IRQ Number */
+  /* The ISR logic uses: irq = cfg->irq_start + i */
+  int irq = cfg->irq_start + pin_index;
+
+  /* 3. Attach the callback to the NuttX vector table */
+  /* Only attach if func is valid; otherwise detach */
+  if (func != NULL)
+    {
+      irq_attach(irq, func, arg);
+      up_enable_irq(irq); /* Enable the virtual IRQ (software flag) */
+    }
+  else
+    {
+      up_disable_irq(irq);
+      irq_detach(irq);
+    }
+
+  return OK;
+}
+
+/****************************************************************************
  * Private Functions
  ****************************************************************************/
 

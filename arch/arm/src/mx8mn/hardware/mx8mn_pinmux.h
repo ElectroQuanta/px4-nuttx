@@ -756,5 +756,15 @@
 #define GPIO_PAD_CTRL  (PAD_CTL_HYS | PAD_CTL_PUE | PAD_CTL_PE | PAD_CTL_DSE2)
 #define UART_PAD_CTRL  (PAD_CTL_PUE | PAD_CTL_PE)
 #define SPI_PAD_CTRL   (PAD_CTL_PUE)
+#define PWM_PAD_CTRL (PAD_CTL_HYS | PAD_CTL_PE | PAD_CTL_FSEL | PAD_CTL_DSE2)
+
+/* I2C Pad Control:
+ * ODE (Bit 5) = 1 : Open Drain Enable
+ * PUE (Bit 6) = 1 : Pull Up Enable
+ * PE  (Bit 8) = 1 : Pull Select Enable
+ * HYS (Bit 7) = 1 : Schmitt Trigger Enable
+ * DSE (Bits 1-2) = 3 : Max Drive Strength (x6)
+ */
+#define I2C_PAD_CTRL  (PAD_CTL_ODE | PAD_CTL_PUE | PAD_CTL_PE | PAD_CTL_HYS | PAD_CTL_DSE6)
 
 #endif /* __ARCH_ARM_SRC_MX8MN_HARDWARE_MX8MN_PINMUX_H */

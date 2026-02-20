@@ -123,6 +123,49 @@ config MX8MN_SPI_DRIVER
 
 endif # MX8MN_SPI
 
+#####################################################################
+#  PWM Configuration
+#####################################################################
+
+config MX8MN_PWM
+	bool "PWM Support"
+	select PWM
+	---help---
+		Build in support for PWM (Pulse Width Modulation) modules.
+		Used for motor control (ESC) and servo outputs.
+
+if MX8MN_PWM
+
+config MX8MN_PWM1
+	bool "PWM1"
+	default n
+	select PWM
+	---help---
+		Enable PWM1 module on SPDIF_EXT_CLK pin.
+
+config MX8MN_PWM2
+	bool "PWM2"
+	default n
+	select PWM
+	---help---
+		Enable PWM2 module on SPDIF_RX pin.
+
+config MX8MN_PWM3
+	bool "PWM3"
+	default n
+	select PWM
+	---help---
+		Enable PWM3 module on SPDIF_TX pin.
+
+config MX8MN_PWM4
+	bool "PWM4"
+	default n
+	select PWM
+	---help---
+		Enable PWM4 module on SAI3_MCLK pin.
+
+endif # MX8MN_PWM
+
 config MX8MN_RPMSG
 	bool "RPMSG support"
 	default y

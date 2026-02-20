@@ -46,6 +46,10 @@ ifeq ($(CONFIG_SPI),y)
 CHIP_CSRCS += mx8mn_ecspi.c
 endif
 
+ifeq ($(CONFIG_PWM),y)
+CHIP_CSRCS += mx8mn_pwm.c
+endif
+
 ifeq ($(CONFIG_MX8MN_RPMSG),y)
 CHIP_CSRCS += mx8mn_rptun.c mx8mn_ipc.c mx8mn_rsctable.c
 endif

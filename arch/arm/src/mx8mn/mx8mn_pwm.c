@@ -55,22 +55,25 @@
 /* Default pin mappings from board.h
  * These can be overridden at board level by defining BOARD_PWMx_PIN
  * before including board.h
+ *
+ * Pin values are enum identifiers (not IOMUXC macros) that get
+ * mapped to IOMUXC configurations via pwm_configure_pin()
  */
 
 #ifndef BOARD_PWM1_PIN
-#  define BOARD_PWM1_PIN  IOMUXC_SPDIF_EXT_CLK_PWM1_OUT
+#  define BOARD_PWM1_PIN  1  /* PWM_PIN_SPDIF_EXT_CLK */
 #endif
 
 #ifndef BOARD_PWM2_PIN
-#  define BOARD_PWM2_PIN  IOMUXC_SPDIF_RX_PWM2_OUT
+#  define BOARD_PWM2_PIN  2  /* PWM_PIN_SPDIF_RX */
 #endif
 
 #ifndef BOARD_PWM3_PIN
-#  define BOARD_PWM3_PIN  IOMUXC_SPDIF_TX_PWM3_OUT
+#  define BOARD_PWM3_PIN  3  /* PWM_PIN_SPDIF_TX */
 #endif
 
 #ifndef BOARD_PWM4_PIN
-#  define BOARD_PWM4_PIN  IOMUXC_SAI3_MCLK_PWM4_OUT
+#  define BOARD_PWM4_PIN  4  /* PWM_PIN_SAI3_MCLK */
 #endif
 
 /****************************************************************************
@@ -141,6 +144,62 @@ static struct mx8mn_pwm_priv_s *pwm_get_priv(int pwm_id)
     }
 
   return &g_pwm_priv[pwm_id - 1];
+}
+
+/****************************************************************************
+ * Name: pwm_configure_pin
+ *
+ * Description:
+ *   Configure IOMUX for a PWM pin based on pin identifier.
+ *   Maps pin enum values to actual IOMUXC register configurations.
+ *
+ ****************************************************************************/
+
+static void pwm_configure_pin(uint32_t pin_id)
+{
+  /* Map pin identifier to IOMUXC configuration
+   * The IOMUXC macros expand to multiple comma-separated values:
+   * (mux_register, mux_mode, input_register, input_daisy, config_register)
+   */
+
+  switch (pin_id)
+    {
+      case 1:  /* PWM_PIN_SPDIF_EXT_CLK - PWM1 */
+        mx8mn_iomux_configure(IOMUXC_SPDIF_EXT_CLK_PWM1_OUT);
+        break;
+
+      case 2:  /* PWM_PIN_SPDIF_RX - PWM2 */
+        mx8mn_iomux_configure(IOMUXC_SPDIF_RX_PWM2_OUT);
+        break;
+
+      case 3:  /* PWM_PIN_SPDIF_TX - PWM3 */
+        mx8mn_iomux_configure(IOMUXC_SPDIF_TX_PWM3_OUT);
+        break;
+
+      case 4:  /* PWM_PIN_SAI3_MCLK - PWM4 */
+        mx8mn_iomux_configure(IOMUXC_SAI3_MCLK_PWM4_OUT);
+        break;
+
+      case 5:  /* PWM_PIN_GPIO1_IO00 - PWM1 */
+        mx8mn_iomux_configure(IOMUXC_GPIO1_IO00_PWM1_OUT);
+        break;
+
+      case 6:  /* PWM_PIN_GPIO1_IO01 - PWM2 */
+        mx8mn_iomux_configure(IOMUXC_GPIO1_IO01_PWM2_OUT);
+        break;
+
+      case 7:  /* PWM_PIN_GPIO1_IO02 - PWM3 */
+        mx8mn_iomux_configure(IOMUXC_GPIO1_IO02_PWM3_OUT);
+        break;
+
+      case 8:  /* PWM_PIN_GPIO1_IO03 - PWM4 */
+        mx8mn_iomux_configure(IOMUXC_GPIO1_IO03_PWM4_OUT);
+        break;
+
+      default:
+        pwmerr("ERROR: Invalid PWM pin ID: %u\n", pin_id);
+        break;
+    }
 }
 
 /****************************************************************************
@@ -269,9 +328,11 @@ int mx8mn_pwm_init_with_pin(int pwm_id, uint32_t pin)
       /* Busy wait */
     }
 
-  /* Configure IOMUX pin for PWM output */
+  /* Configure IOMUX pin for PWM output
+   * Map pin identifier to IOMUXC configuration
+   */
 
-  mx8mn_iomux_configure(priv->pin);
+  pwm_configure_pin(priv->pin);
 
   /* Configure control register:
    * - Clock source: ipg_clk (24 MHz)

@@ -38,6 +38,8 @@
 #include "mx8mn_ccm.h"
 #include "mx8mn_iomux.h"
 
+#include <arch/board/board.h>
+
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
@@ -49,6 +51,27 @@
 #define PWM_DEFAULT_FREQUENCY    400      /* 400 Hz for standard ESC */
 #define PWM_DEFAULT_PRESCALER    1        /* Divide by 2 */
 #define PWM_DEFAULT_CLOCK        MX8MN_PWM_IPG_CLK_FREQ
+
+/* Default pin mappings from board.h
+ * These can be overridden at board level by defining BOARD_PWMx_PIN
+ * before including board.h
+ */
+
+#ifndef BOARD_PWM1_PIN
+#  define BOARD_PWM1_PIN  IOMUXC_SPDIF_EXT_CLK_PWM1_OUT
+#endif
+
+#ifndef BOARD_PWM2_PIN
+#  define BOARD_PWM2_PIN  IOMUXC_SPDIF_RX_PWM2_OUT
+#endif
+
+#ifndef BOARD_PWM3_PIN
+#  define BOARD_PWM3_PIN  IOMUXC_SPDIF_TX_PWM3_OUT
+#endif
+
+#ifndef BOARD_PWM4_PIN
+#  define BOARD_PWM4_PIN  IOMUXC_SAI3_MCLK_PWM4_OUT
+#endif
 
 /****************************************************************************
  * Private Types
@@ -74,25 +97,25 @@ static struct mx8mn_pwm_priv_s g_pwm_priv[PWM_MAX_MODULES] =
 {
   {
     .base       = MX8M_PWM1,
-    .pin        = IOMUXC_SPDIF_EXT_CLK_PWM1_OUT,
+    .pin        = BOARD_PWM1_PIN,
     .clock_gate = CCM_PWM1_CLK_GATE,
     .config     = { 0 }
   },
   {
     .base       = MX8M_PWM2,
-    .pin        = IOMUXC_SPDIF_RX_PWM2_OUT,
+    .pin        = BOARD_PWM2_PIN,
     .clock_gate = CCM_PWM2_CLK_GATE,
     .config     = { 0 }
   },
   {
     .base       = MX8M_PWM3,
-    .pin        = IOMUXC_SPDIF_TX_PWM3_OUT,
+    .pin        = BOARD_PWM3_PIN,
     .clock_gate = CCM_PWM3_CLK_GATE,
     .config     = { 0 }
   },
   {
     .base       = MX8M_PWM4,
-    .pin        = IOMUXC_SAI3_MCLK_PWM4_OUT,
+    .pin        = BOARD_PWM4_PIN,
     .clock_gate = CCM_PWM4_CLK_GATE,
     .config     = { 0 }
   }
@@ -200,10 +223,10 @@ static int pwm_calculate_parameters(uint32_t frequency,
  ****************************************************************************/
 
 /****************************************************************************
- * Name: mx8mn_pwm_init
+ * Name: mx8mn_pwm_init_with_pin
  ****************************************************************************/
 
-int mx8mn_pwm_init(int pwm_id)
+int mx8mn_pwm_init_with_pin(int pwm_id, uint32_t pin)
 {
   struct mx8mn_pwm_priv_s *priv = pwm_get_priv(pwm_id);
   uint32_t regval;
@@ -220,7 +243,16 @@ int mx8mn_pwm_init(int pwm_id)
       return OK;
     }
 
-  pwminfo("Initializing PWM%d at base 0x%08x\n", pwm_id, priv->base);
+  /* Override default pin if specified (non-zero) */
+
+  if (pin != 0)
+    {
+      pwminfo("PWM%d: Overriding pin config to 0x%08x\n", pwm_id, pin);
+      priv->pin = pin;
+    }
+
+  pwminfo("Initializing PWM%d at base 0x%08x with pin 0x%08x\n",
+          pwm_id, priv->base, priv->pin);
 
   /* Enable PWM clock gate */
 
@@ -268,6 +300,17 @@ int mx8mn_pwm_init(int pwm_id)
 
   return mx8mn_pwm_configure(pwm_id, PWM_DEFAULT_FREQUENCY,
                              MX8MN_PWM_POLARITY_NORMAL);
+}
+
+/****************************************************************************
+ * Name: mx8mn_pwm_init
+ ****************************************************************************/
+
+int mx8mn_pwm_init(int pwm_id)
+{
+  /* Use default pin from board configuration */
+
+  return mx8mn_pwm_init_with_pin(pwm_id, 0);
 }
 
 /****************************************************************************

@@ -70,10 +70,11 @@ struct mx8mn_pwm_config_s
  * Name: mx8mn_pwm_init
  *
  * Description:
- *   Initialize a PWM module. This function:
+ *   Initialize a PWM module with default pin configuration from board.h
+ *   This function:
  *   - Enables the PWM clock gate via CCM
  *   - Performs software reset
- *   - Configures IOMUX pin muxing for PWM output
+ *   - Configures IOMUX pin muxing for PWM output (using BOARD_PWMx_PIN)
  *   - Sets up default control register values
  *
  * Input Parameters:
@@ -85,6 +86,35 @@ struct mx8mn_pwm_config_s
  ****************************************************************************/
 
 int mx8mn_pwm_init(int pwm_id);
+
+/****************************************************************************
+ * Name: mx8mn_pwm_init_with_pin
+ *
+ * Description:
+ *   Initialize a PWM module with custom pin configuration.
+ *   This allows runtime pin selection without modifying driver code.
+ *
+ *   Use this when you need to override the default board pin configuration,
+ *   or when dynamically configuring PWM outputs for different board variants.
+ *
+ * Input Parameters:
+ *   pwm_id - PWM module ID (MX8MN_PWM1 to MX8MN_PWM4)
+ *   pin    - IOMUX pin configuration constant (e.g., IOMUXC_GPIO1_IO00_PWM1_OUT)
+ *            Pass 0 to use the default pin from board.h
+ *
+ * Returned Value:
+ *   Zero (OK) on success; a negated errno value on failure.
+ *
+ * Example:
+ *   // Use default pin from board.h
+ *   mx8mn_pwm_init_with_pin(MX8MN_PWM1, 0);
+ *
+ *   // Override with GPIO1_IO00
+ *   mx8mn_pwm_init_with_pin(MX8MN_PWM1, IOMUXC_GPIO1_IO00_PWM1_OUT);
+ *
+ ****************************************************************************/
+
+int mx8mn_pwm_init_with_pin(int pwm_id, uint32_t pin);
 
 /****************************************************************************
  * Name: mx8mn_pwm_deinit

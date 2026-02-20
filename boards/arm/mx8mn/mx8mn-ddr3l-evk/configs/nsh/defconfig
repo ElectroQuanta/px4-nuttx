@@ -176,3 +176,12 @@ CONFIG_SPI_DRIVER=y
 # CONFIG_SENSORS_LSM330SPI is not set
 # CONFIG_EXAMPLES_LSM330SPI_TEST is not set
 # CONFIG_SYSTEM_SPITOOL is not set
+
+###############################
+# PWM
+###############################
+CONFIG_MX8MN_PWM1=y
+CONFIG_MX8MN_PWM2=y
+CONFIG_MX8MN_PWM3=y
+CONFIG_MX8MN_PWM4=y
+CONFIG_MX8MN_PWM=y

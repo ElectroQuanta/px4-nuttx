@@ -36,7 +36,7 @@
 #include "hardware/mx8mn_pinmux.h"
 #include "mx8mn_pwm.h"
 #include "mx8mn_ccm.h"
-#include "mx8mn_iomux.h"
+#include "mx8mn_iomuxc.h"
 
 #include <arch/board/board.h>
 
@@ -165,39 +165,39 @@ static void pwm_configure_pin(uint32_t pin_id)
   switch (pin_id)
     {
       case 1:  /* PWM_PIN_SPDIF_EXT_CLK - PWM1 */
-        mx8mn_iomux_configure(IOMUXC_SPDIF_EXT_CLK_PWM1_OUT);
+        mx8mn_iomuxc_config(IOMUX_SPDIF_EXT_CLK_PWM1_OUT);
         break;
 
       case 2:  /* PWM_PIN_SPDIF_RX - PWM2 */
-        mx8mn_iomux_configure(IOMUXC_SPDIF_RX_PWM2_OUT);
+        mx8mn_iomuxc_config(IOMUX_SPDIF_RX_PWM2_OUT);
         break;
 
       case 3:  /* PWM_PIN_SPDIF_TX - PWM3 */
-        mx8mn_iomux_configure(IOMUXC_SPDIF_TX_PWM3_OUT);
+        mx8mn_iomuxc_config(IOMUX_SPDIF_TX_PWM3_OUT);
         break;
 
       case 4:  /* PWM_PIN_SAI3_MCLK - PWM4 */
-        mx8mn_iomux_configure(IOMUXC_SAI3_MCLK_PWM4_OUT);
+        mx8mn_iomuxc_config(IOMUX_SAI3_MCLK_PWM4_OUT);
         break;
 
       case 5:  /* PWM_PIN_GPIO1_IO00 - PWM1 */
-        mx8mn_iomux_configure(IOMUXC_GPIO1_IO00_PWM1_OUT);
+        mx8mn_iomuxc_config(IOMUX_GPIO1_IO08_PWM1_OUT);
         break;
 
       case 6:  /* PWM_PIN_GPIO1_IO01 - PWM2 */
-        mx8mn_iomux_configure(IOMUXC_GPIO1_IO01_PWM2_OUT);
+        mx8mn_iomuxc_config(IOMUX_GPIO1_IO09_PWM2_OUT);
         break;
 
       case 7:  /* PWM_PIN_GPIO1_IO02 - PWM3 */
-        mx8mn_iomux_configure(IOMUXC_GPIO1_IO02_PWM3_OUT);
+        mx8mn_iomuxc_config(IOMUX_GPIO1_IO10_PWM3_OUT);
         break;
 
       case 8:  /* PWM_PIN_GPIO1_IO03 - PWM4 */
-        mx8mn_iomux_configure(IOMUXC_GPIO1_IO03_PWM4_OUT);
+        mx8mn_iomuxc_config(IOMUX_GPIO1_IO15_PWM4_OUT);
         break;
 
       default:
-        pwmerr("ERROR: Invalid PWM pin ID: %u\n", pin_id);
+        pwmerr("ERROR: Invalid PWM pin ID: %lu\n", pin_id);
         break;
     }
 }
@@ -263,7 +263,7 @@ static int pwm_calculate_parameters(uint32_t frequency,
 
   if (best_error == UINT32_MAX)
     {
-      pwmerr("ERROR: Could not find valid PWM parameters for %u Hz\n",
+      pwmerr("ERROR: Could not find valid PWM parameters for %lu Hz\n",
              frequency);
       return -EINVAL;
     }
@@ -271,7 +271,7 @@ static int pwm_calculate_parameters(uint32_t frequency,
   *prescaler = best_prescaler;
   *period = best_period;
 
-  pwminfo("Frequency %u Hz: prescaler=%u, period=%u (error=%u Hz)\n",
+  pwminfo("Frequency %lu Hz: prescaler=%lu, period=%lu (error=%lu Hz)\n",
           frequency, best_prescaler, best_period, best_error);
 
   return OK;
@@ -306,11 +306,11 @@ int mx8mn_pwm_init_with_pin(int pwm_id, uint32_t pin)
 
   if (pin != 0)
     {
-      pwminfo("PWM%d: Overriding pin config to 0x%08x\n", pwm_id, pin);
+      pwminfo("PWM%d: Overriding pin config to 0x%08lx\n", pwm_id, pin);
       priv->pin = pin;
     }
 
-  pwminfo("Initializing PWM%d at base 0x%08x with pin 0x%08x\n",
+  pwminfo("Initializing PWM%d at base 0x%08lx with pin 0x%08lx\n",
           pwm_id, priv->base, priv->pin);
 
   /* Enable PWM clock gate */
@@ -393,7 +393,7 @@ int mx8mn_pwm_deinit(int pwm_id)
 
   /* Disable PWM clock gate */
 
-  mx8mn_ccm_gate_clock(priv->clock_gate, CLK_DOMAIN_CONTROLLED);
+  mx8mn_ccm_gate_clock(priv->clock_gate, CLK_NOT_NEEDED);
 
   /* Mark as uninitialized */
 
@@ -480,7 +480,7 @@ int mx8mn_pwm_configure(int pwm_id, uint32_t frequency, uint8_t polarity)
   priv->config.period = period;
   priv->config.polarity = polarity;
 
-  pwminfo("PWM%d configured: freq=%u Hz, prescaler=%u, period=%u\n",
+  pwminfo("PWM%d configured: freq=%lu Hz, prescaler=%lu, period=%lu\n",
           pwm_id, frequency, prescaler, period);
 
   return OK;
@@ -521,7 +521,7 @@ int mx8mn_pwm_set_duty_cycle(int pwm_id, uint32_t duty_us)
 
   if (sample > (priv->config.period + 1))
     {
-      pwmwarn("WARNING: Duty cycle %u us exceeds period, clamping\n",
+      pwmwarn("WARNING: Duty cycle %lu us exceeds period, clamping\n",
               duty_us);
       sample = priv->config.period + 1;
     }
@@ -557,7 +557,7 @@ int mx8mn_pwm_set_duty_percent(int pwm_id, uint32_t duty_percent)
 
   if (duty_percent > 100)
     {
-      pwmerr("ERROR: Invalid duty cycle: %u%%\n", duty_percent);
+      pwmerr("ERROR: Invalid duty cycle: %lu%%\n", duty_percent);
       return -EINVAL;
     }
 

@@ -169,7 +169,7 @@ endif # MX8MN_PWM
 config MX8MN_RPMSG
 	bool "RPMSG support"
 	default y
-	depends on DEV_RPMSG
+	depends on RPTUN
 	---help---
 		Enable RPMSG shared memory and behave as a client device that can be
 		accessed by the IMX8MN A53 core running Linux IMX.

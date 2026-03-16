@@ -51,5 +51,5 @@ CHIP_CSRCS += mx8mn_pwm.c
 endif
 
 ifeq ($(CONFIG_MX8MN_RPMSG),y)
-CHIP_CSRCS += mx8mn_rptun.c mx8mn_ipc.c mx8mn_rsctable.c
+CHIP_CSRCS += mx8mn_rptun.c mx8mn_ipc.c mx8mn_rsctable.c mx8mn_addrenv.c
 endif

@@ -39,6 +39,8 @@
 #include <nuttx/semaphore.h>
 
 #include "arm_internal.h"
+#include <metal/sys.h>
+#include <metal/io.h>
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -46,7 +48,7 @@
 
 /* Vring configuration parameters */
 
-#define VRING_SHMEM       (0x550FF000) /* Vring shared memory start */
+#define VRING_SHMEM (RESOURCE_TABLE_BASE) /* Vring shared memory start */
 
 /* IPC configuration */
 
@@ -75,6 +77,9 @@ struct mx8mn_rptun_dev_s
   char                        cpuname[RPMSG_NAME_SIZE + 1];
   char                        shmemname[RPMSG_NAME_SIZE + 1];
 };
+
+static struct metal_io_region g_rpmsg_io_region;
+static metal_phys_addr_t g_rpmsg_physmap = MX8MN_RPMSG_MPU_BASE;
 
 /****************************************************************************
  * Private Function Prototypes
@@ -244,13 +249,10 @@ static int mx8mn_rptun_register_callback(struct rptun_dev_s *dev,
 
 static void mx8mn_ipc_callback(int id, void *arg)
 {
-  ipcinfo("Rptun IPC interrupt %d\n", id);
   if (id == RPTUN_IPC_CHAN_SLAVE_RX)
     {
       struct mx8mn_rptun_dev_s *dev = &g_rptun_dev;
 
-      up_invalidate_dcache(0x55000000, 0x55010000);
-      up_invalidate_dcache(0x55400000, 0x55500000);
       if (dev->callback != NULL)
         {
           dev->callback(dev->arg, RPTUN_NOTIFY_ALL);
@@ -272,6 +274,14 @@ int mx8mn_rptun_init(const char *shmemname, const char *cpuname)
 {
   struct mx8mn_rptun_dev_s *dev = &g_rptun_dev;
   int                       ret = OK;
+
+  metal_io_init(&g_rpmsg_io_region,
+                (void *)MX8MN_RPMSG_MPU_BASE, 
+                &g_rpmsg_physmap,             
+                MX8MN_RPMSG_MPU_SIZE,         
+                -1,                           
+                0,                            
+                NULL);                        
 
   /* Initialize IPC */
 

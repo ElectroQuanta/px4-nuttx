@@ -29,6 +29,17 @@
 
 #include <nuttx/rptun/rptun.h>
 
+#define MX8MN_NUTTX_DDR_BASE    0x77000000
+#define MX8MN_NUTTX_DDR_SIZE    0x00400000
+#define VDEV0_VRING_BASE        0x78000000
+#define VRING_SIZE              0x00008000
+#define VDEV1_VRING_BASE        (VDEV0_VRING_BASE + VRING_SIZE)
+#define RESOURCE_TABLE_BASE     0x780FF000
+#define VDEVBUFFER_BASE         0x78400000
+#define VDEVBUFFER_SIZE         0x00100000
+#define MX8MN_RPMSG_MPU_BASE    0x78000000
+#define MX8MN_RPMSG_MPU_SIZE    0x00800000
+
 /****************************************************************************
  * Public Data
  ****************************************************************************/

@@ -40,7 +40,11 @@
 
 #define UART_RPMSG_DEV_CONSOLE          "/dev/console"
 #define UART_RPMSG_DEV_PREFIX           "/dev/tty"
+#ifdef CONFIG_MX8MN_RPMSG
+#define UART_RPMSG_EPT_PREFIX ""
+#else
 #define UART_RPMSG_EPT_PREFIX           "rpmsg-tty"
+#endif
 
 #define UART_RPMSG_TTY_WRITE            0
 #define UART_RPMSG_TTY_WAKEUP           1
@@ -214,6 +218,11 @@ static void uart_rpmsg_dmasend(FAR struct uart_dev_s *dev)
   msg->header.cookie  = (uintptr_t)dev;
 
   rpmsg_send_nocopy(&priv->ept, msg, sizeof(*msg) + len);
+
+#ifdef CONFIG_MX8MN_RPMSG
+  dev->dmatx.nbytes = len;
+  uart_xmitchars_done(dev);
+#endif
 }
 
 static void uart_rpmsg_dmareceive(FAR struct uart_dev_s *dev)
@@ -381,6 +390,33 @@ static int uart_rpmsg_ept_cb(FAR struct rpmsg_endpoint *ept, FAR void *data,
 
       uart_rpmsg_dmatxavail(dev);
     }
+#ifdef CONFIG_MX8MN_RPMSG
+  else
+    {
+      /* Raw data from imx_rpmsg_tty — no header, just bytes.
+       * Treat entire message as payload. */
+      FAR struct uart_dmaxfer_s *xfer = &dev->dmarx;
+
+      uart_recvchars_dma(dev);
+
+      size_t space = xfer->length + xfer->nlength;
+      size_t nbytes = len > space ? space : len;
+
+      if (nbytes > xfer->length)
+        {
+          memcpy(xfer->buffer, data, xfer->length);
+          memcpy(xfer->nbuffer, (FAR char *)data + xfer->length,
+                 nbytes - xfer->length);
+        }
+      else
+        {
+          memcpy(xfer->buffer, data, nbytes);
+        }
+
+      xfer->nbytes = nbytes;
+      uart_recvchars_done(dev);
+    }
+#endif
 
   return 0;
 }
@@ -394,7 +430,11 @@ int uart_rpmsg_init(FAR const char *cpuname, FAR const char *devname,
 {
   FAR struct uart_rpmsg_priv_s *priv;
   FAR struct uart_dev_s *dev;
+#ifdef CONFIG_MX8MN_RPMSG
+  char dev_name[64];
+#else
   char dev_name[32];
+#endif
   int ret = -ENOMEM;
 
   dev = kmm_zalloc(sizeof(struct uart_dev_s));

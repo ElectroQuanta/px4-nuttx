@@ -28,7 +28,7 @@
  ****************************************************************************/
 
 #include <nuttx/config.h>
-
+#include <syslog.h>
 /****************************************************************************
  * Public Types
  ****************************************************************************/
@@ -38,6 +38,10 @@ typedef void (*ipc_callback_t)(int id, void *arg);
 /****************************************************************************
  * Public Function Prototypes
  ****************************************************************************/
+
+/* Debug macros — follow NuttX convention for subsystem logging */
+
+#  define ipcerr(format, ...)   syslog(LOG_ERR,    "IPC: " format, ##__VA_ARGS__)
 
 void mx8mn_ipc_subscribe(int id, ipc_callback_t callback, void *args);
 void mx8mn_ipc_signal(int id);

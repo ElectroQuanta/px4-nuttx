@@ -33,6 +33,7 @@
 
 #include "mpu.h"
 #include "mx8mn_mpuinit.h"
+#include "mx8mn_rsctable.h"
 
 /****************************************************************************
  * Private Data
@@ -116,14 +117,25 @@ void mx8mn_mpu_initialize(void)
    * Normal type, not shareable, cacheable
    */
 
-  /* mpu_configure_region(0x40000000, 1 * 1024 * 1024 * 1024, */
-  mpu_configure_region(0x60000000, 256 * 1024 * 1024,
+  mpu_configure_region(MX8MN_NUTTX_DDR_BASE, MX8MN_NUTTX_DDR_SIZE,
                       MPU_RASR_TEX_NOR  |  /* Normal */
                       MPU_RASR_C        |  /* Cacheable  */
                       MPU_RASR_B        |  /* Bufferable
                                             * Not Shareable  */
                       MPU_RASR_AP_RWRW);   /* P:RW   U:RW
                                             * Executable */
+
+  /* Region 5 DDR — RPMSG shared memory [0x7800_0000 - 0x787F_FFFF] — 8MB
+   * Strongly Ordered: non-cacheable, non-bufferable.
+   */
+
+  mpu_configure_region(MX8MN_RPMSG_MPU_BASE, MX8MN_RPMSG_MPU_SIZE,
+                       MPU_RASR_TEX_SO |      /* Strongly Ordered    */
+                                              /* Not Cacheable       */
+                                              /* Not Bufferable      */
+                           MPU_RASR_AP_RWRW | /* P:RW   U:RW         */
+                           MPU_RASR_XN);      /* Not executable      */
+
 #if 0
 
 #ifdef CONFIG_BUILD_PROTECTED

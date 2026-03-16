@@ -55,7 +55,7 @@
 #ifdef CONFIG_RPMSG_UART
 void rpmsg_serialinit(void)
 {
-  uart_rpmsg_init("netcore", "proxy", 4096, true);
+  uart_rpmsg_init("netcore", "rpmsg-virtual-tty-channel-1", 4096, false);
 }
 #endif
 

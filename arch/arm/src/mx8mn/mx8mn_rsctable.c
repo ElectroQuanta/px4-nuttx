@@ -34,9 +34,6 @@
 #define NUM_VRINGS              0x02
 #define RL_BUFFER_COUNT         0x100
 #define VRING_ALIGN             0x1000
-#define VDEV0_VRING_BASE        0x55000000
-#define RESOURCE_TABLE_BASE     0x550FF000
-#define VRING_SIZE              0x8000
 
 #define NO_RESOURCE_ENTRIES     (1)
 #define RSC_VDEV_FEATURE_NS     (1) /* Support name service announcement */
@@ -48,12 +45,13 @@
 
 /* Place resource table in special ELF section */
 #if defined(__ARMCC_VERSION) || defined(__GNUC__)
-__attribute__ ((section(".resource_table")))
+__attribute__((section(".resource_table")))
 #elif defined(__ICCARM__)
 #pragma location = ".resource_table"
 #else
 #error Compiler not supported!
 #endif
+__attribute__((used))
 const struct rptun_rsc_s g_mx8mn_rsc_table =
 {
     .rsc_tbl_hdr =

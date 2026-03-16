@@ -168,8 +168,6 @@ void mx8mn_ipc_subscribe(int id, ipc_callback_t callback, void *args)
 
   DEBUGASSERT(id < MX8MN_IPC_CHANS);
 
-  ipcinfo("IPC subscribe %d\n", id);
-
   /* Register callback */
 
   dev->recv[id].callback = callback;
@@ -184,15 +182,13 @@ void mx8mn_ipc_signal(int id)
 {
   DEBUGASSERT(id < MX8MN_IPC_CHANS);
 
-  ipcinfo("IPC signal %d\n", id);
-
   /* Wait TX register to be empty. */
 
-  while (!mx8mn_ipc_mu_tx_empty(id))
+  while (!mx8mn_ipc_mu_tx_empty(RPMSG_MU_CHANNEL))
     {
     }
 
-  mx8mn_ipc_mu_send_msg(1, id);
+  mx8mn_ipc_mu_send_msg(RPMSG_MU_CHANNEL, id);
 }
 
 /****************************************************************************

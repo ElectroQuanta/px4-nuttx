@@ -121,21 +121,6 @@ CONFIG_EXAMPLES_INA219=n
 CONFIG_TESTING_OSTEST=y
 
 ###############################
-# Debug
-###############################
-# CONFIG_DEBUG_FEATURES=y
-# CONFIG_DEBUG_SYMBOLS=y
-# CONFIG_DEBUG_OPTLEVEL="-Og"
-# CONFIG_DEBUG_NOOPT=n
-# CONFIG_DEBUG_INFO=y
-# CONFIG_DEBUG_ALERT=y
-# CONFIG_DEBUG_WARN=y
-# CONFIG_DEBUG_ERROR=y
-# CONFIG_SYSLOG_CONSOLE=y
-# CONFIG_NSH_DISABLE_PS=n
-# CONFIG_FS_PROCFS=y
-
-###############################
 # Test Flat build
 ###############################
 # CONFIG_BUILD_PROTECTED=n

@@ -324,6 +324,26 @@ static int rpmsgfs_ept_cb(FAR struct rpmsg_endpoint *ept,
   FAR struct rpmsgfs_header_s *header = data;
   uint32_t command = header->command;
 
+#ifdef CONFIG_MX8MN_RPMSG
+  if (src != RPMSG_ADDR_ANY && (ept->dest_addr == RPMSG_ADDR_ANY || ept->dest_addr == src))
+	{
+	  if (ept->dest_addr == RPMSG_ADDR_ANY)
+		{
+		  ept->dest_addr = src;
+		}
+
+	  if (ept->ns_bound_cb)
+		{
+		  ept->ns_bound_cb(ept);
+		  ept->ns_bound_cb = NULL;
+		}
+	}
+  if (command == RPMSGFS_SYNC && header->cookie == 0)
+    {
+      return 0;
+    }
+#endif
+
   if (command < ARRAY_SIZE(g_rpmsgfs_handler))
     {
       return g_rpmsgfs_handler[command](ept, data, len, src, priv);

@@ -72,7 +72,7 @@ int mx8mn_bringup(void)
   int ret = OK;
 
 #ifdef CONFIG_MX8MN_RPMSG
-  mx8mn_rptun_init("imx8mn-shmem", "netcore");
+  mx8mn_rptun_init("imx8mn-shmem", "linux");
 #endif /* CONFIG_MX8MN_RPMSG */
 
 #if defined(CONFIG_USERLED) && !defined(CONFIG_ARCH_LEDS)

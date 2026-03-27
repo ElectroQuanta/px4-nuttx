@@ -51,6 +51,7 @@ struct mx8mn_gpio_s
   const uint32_t isr;
   const uint32_t imr;
   const uint16_t irq_start;
+  const uint16_t parent_irq;
   const uint16_t bit;
   const uint32_t mask;
 };
@@ -64,6 +65,7 @@ static struct mx8mn_gpio_s g_gpio1_l =
   .isr        = GPIO_ISR(1),
   .imr        = GPIO_IMR(1),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO1_0,
+  .parent_irq = MX8MN_IRQ_GPIO1_0_15,
   .bit        = 0,
   .mask       = 0x0000ffff
 };
@@ -73,6 +75,7 @@ static struct mx8mn_gpio_s g_gpio1_h =
   .isr        = GPIO_ISR(1),
   .imr        = GPIO_IMR(1),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO1_16,
+  .parent_irq = MX8MN_IRQ_GPIO1_16_31,
   .bit        = 16,
   .mask       = 0xffff0000
 };
@@ -82,6 +85,7 @@ static  struct mx8mn_gpio_s g_gpio2_l =
   .isr        = GPIO_ISR(2),
   .imr        = GPIO_IMR(2),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO2_0,
+  .parent_irq = MX8MN_IRQ_GPIO2_0_15,
   .bit        = 0,
   .mask       = 0x0000ffff
 };
@@ -91,6 +95,7 @@ static struct mx8mn_gpio_s g_gpio2_h =
   .isr        = GPIO_ISR(2),
   .imr        = GPIO_IMR(2),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO2_16,
+  .parent_irq = MX8MN_IRQ_GPIO2_16_31,
   .bit        = 16,
   .mask       = 0xffff0000
 };
@@ -100,6 +105,7 @@ static struct mx8mn_gpio_s g_gpio3_l =
   .isr        = GPIO_ISR(3),
   .imr        = GPIO_IMR(3),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO3_0,
+  .parent_irq = MX8MN_IRQ_GPIO3_0_15,
   .bit        = 0,
   .mask       = 0x0000ffff
 };
@@ -109,6 +115,7 @@ static struct mx8mn_gpio_s g_gpio3_h =
   .isr        = GPIO_ISR(3),
   .imr        = GPIO_IMR(3),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO3_16,
+  .parent_irq = MX8MN_IRQ_GPIO3_16_31,
   .bit        = 16,
   .mask       = 0xffff0000
 };
@@ -118,6 +125,7 @@ static struct mx8mn_gpio_s g_gpio4_l =
   .isr        = GPIO_ISR(4),
   .imr        = GPIO_IMR(4),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO4_0,
+  .parent_irq = MX8MN_IRQ_GPIO4_0_15,
   .bit        = 0,
   .mask       = 0x0000ffff
 };
@@ -127,6 +135,7 @@ static struct mx8mn_gpio_s g_gpio4_h =
   .isr        = GPIO_ISR(4),
   .imr        = GPIO_IMR(4),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO4_16,
+  .parent_irq = MX8MN_IRQ_GPIO4_16_31,
   .bit        = 16,
   .mask       = 0xffff0000
 };
@@ -136,6 +145,7 @@ static struct mx8mn_gpio_s g_gpio5_l =
   .isr        = GPIO_ISR(5),
   .imr        = GPIO_IMR(5),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO5_0,
+  .parent_irq = MX8MN_IRQ_GPIO5_0_15,
   .bit        = 0,
   .mask       = 0x0000ffff
 };
@@ -145,6 +155,7 @@ static struct mx8mn_gpio_s g_gpio5_h =
   .isr        = GPIO_ISR(5),
   .imr        = GPIO_IMR(5),
   .irq_start  = MX8MN_IRQ_SOFT_GPIO5_16,
+  .parent_irq = MX8MN_IRQ_GPIO5_16_31,
   .bit        = 16,
   .mask       = 0xffff0000
 };
@@ -172,11 +183,11 @@ int mx8mn_gpio_irq_attach(gpio_pinset_t pinset, xcpt_t func, void *arg)
       pin_index = pin;
       switch (port)
         {
-          case 0: cfg = &g_gpio1_l; break; /* Port 1 (Index 0) */
-          case 1: cfg = &g_gpio2_l; break;
-          case 2: cfg = &g_gpio3_l; break;
-          case 3: cfg = &g_gpio4_l; break;
-          case 4: cfg = &g_gpio5_l; break;
+          case 1: cfg = &g_gpio1_l; break;
+          case 2: cfg = &g_gpio2_l; break;
+          case 3: cfg = &g_gpio3_l; break;
+          case 4: cfg = &g_gpio4_l; break;
+          case 5: cfg = &g_gpio5_l; break;
           default: return -EINVAL;
         }
     }
@@ -186,11 +197,11 @@ int mx8mn_gpio_irq_attach(gpio_pinset_t pinset, xcpt_t func, void *arg)
       pin_index = pin - 16;
       switch (port)
         {
-          case 0: cfg = &g_gpio1_h; break;
-          case 1: cfg = &g_gpio2_h; break;
-          case 2: cfg = &g_gpio3_h; break;
-          case 3: cfg = &g_gpio4_h; break;
-          case 4: cfg = &g_gpio5_h; break;
+          case 1: cfg = &g_gpio1_h; break;
+          case 2: cfg = &g_gpio2_h; break;
+          case 3: cfg = &g_gpio3_h; break;
+          case 4: cfg = &g_gpio4_h; break;
+          case 5: cfg = &g_gpio5_h; break;
           default: return -EINVAL;
         }
     }
@@ -205,6 +216,10 @@ int mx8mn_gpio_irq_attach(gpio_pinset_t pinset, xcpt_t func, void *arg)
     {
       irq_attach(irq, func, arg);
       up_enable_irq(irq); /* Enable the virtual IRQ (software flag) */
+
+      /* 4. Enable the Parent Interrupt in NVIC on demand */
+
+      up_enable_irq(cfg->parent_irq);
     }
   else
     {
@@ -226,17 +241,16 @@ static int mx8mn_gpio_interrupt(int irq, void *context, void *arg)
   uint32_t status;
   int i;
 
-  /* Get the pending interrupt indications */
+  /* Get the pending interrupt indications, masked by M7's IMR */
 
-  status = getreg32(cfg->isr) & getreg32(cfg->imr) & cfg->mask;
+  status = getreg32(cfg->isr) & getreg32(cfg->imr);
 
-  /* Decode the pending interrupts */
+  /* Scan the 16 bits in the group */
 
-  for (i = 0; (i < 16) && (status != 0); ++i)
+  for (i = 0; i < 16; i++)
     {
-      /* Is the IRQ associate with this pin pending? */
+      uint32_t mask = 1 << (cfg->bit + i);
 
-      uint32_t mask = (1 << (cfg->bit + i));
       if ((status & mask) != 0)
         {
           /* Yes, clear the status bit and dispatch the interrupt */
@@ -336,7 +350,7 @@ int mx8mn_gpio_config(gpio_pinset_t pinset)
 
 void mx8mn_gpio_irq_initialize(void)
 {
-  /* Disable all GPIO interrupts at the source */
+  /* 1. Disable all GPIO interrupts at the source (IMR) */
 
   putreg32(0, GPIO_IMR(1));
   putreg32(0, GPIO_IMR(2));
@@ -344,49 +358,24 @@ void mx8mn_gpio_irq_initialize(void)
   putreg32(0, GPIO_IMR(4));
   putreg32(0, GPIO_IMR(5));
 
-  /* Disable all GPIO interrupts at the NVIC */
-
-  up_disable_irq(MX8MN_IRQ_GPIO1_0_15);
-  up_disable_irq(MX8MN_IRQ_GPIO1_16_31);
-
-  up_disable_irq(MX8MN_IRQ_GPIO2_0_15);
-  up_disable_irq(MX8MN_IRQ_GPIO2_16_31);
-
-  up_disable_irq(MX8MN_IRQ_GPIO3_0_15);
-  up_disable_irq(MX8MN_IRQ_GPIO3_16_31);
-
-  up_disable_irq(MX8MN_IRQ_GPIO4_0_15);
-  up_disable_irq(MX8MN_IRQ_GPIO4_16_31);
-
-  up_disable_irq(MX8MN_IRQ_GPIO5_0_15);
-  up_disable_irq(MX8MN_IRQ_GPIO5_16_31);
-
-  /* Attach all GPIO interrupts and enable the interrupt at the NVIC */
+  /* 2. Attach Primary Handlers but DON'T enable them in NVIC yet.
+   * They will be enabled on-demand in mx8mn_gpio_irq_attach.
+   */
 
   irq_attach(MX8MN_IRQ_GPIO1_0_15, mx8mn_gpio_interrupt, &g_gpio1_l);
-  up_enable_irq(MX8MN_IRQ_GPIO1_0_15);
   irq_attach(MX8MN_IRQ_GPIO1_16_31, mx8mn_gpio_interrupt, &g_gpio1_h);
-  up_enable_irq(MX8MN_IRQ_GPIO1_16_31);
 
   irq_attach(MX8MN_IRQ_GPIO2_0_15, mx8mn_gpio_interrupt, &g_gpio2_l);
-  up_enable_irq(MX8MN_IRQ_GPIO2_0_15);
   irq_attach(MX8MN_IRQ_GPIO2_16_31, mx8mn_gpio_interrupt, &g_gpio2_h);
-  up_enable_irq(MX8MN_IRQ_GPIO2_16_31);
 
   irq_attach(MX8MN_IRQ_GPIO3_0_15, mx8mn_gpio_interrupt, &g_gpio3_l);
-  up_enable_irq(MX8MN_IRQ_GPIO3_0_15);
   irq_attach(MX8MN_IRQ_GPIO3_16_31, mx8mn_gpio_interrupt, &g_gpio3_h);
-  up_enable_irq(MX8MN_IRQ_GPIO3_16_31);
 
   irq_attach(MX8MN_IRQ_GPIO4_0_15, mx8mn_gpio_interrupt, &g_gpio4_l);
-  up_enable_irq(MX8MN_IRQ_GPIO4_0_15);
   irq_attach(MX8MN_IRQ_GPIO4_16_31, mx8mn_gpio_interrupt, &g_gpio4_h);
-  up_enable_irq(MX8MN_IRQ_GPIO4_16_31);
 
   irq_attach(MX8MN_IRQ_GPIO5_0_15, mx8mn_gpio_interrupt, &g_gpio5_l);
-  up_enable_irq(MX8MN_IRQ_GPIO5_0_15);
   irq_attach(MX8MN_IRQ_GPIO5_16_31, mx8mn_gpio_interrupt, &g_gpio5_h);
-  up_enable_irq(MX8MN_IRQ_GPIO5_16_31);
 }
 
 /****************************************************************************

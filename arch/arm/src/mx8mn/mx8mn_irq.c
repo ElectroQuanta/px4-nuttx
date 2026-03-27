@@ -268,10 +268,22 @@ static int mx8mn_irqinfo(int irq, uintptr_t *regaddr, uint32_t *bit,
            *regaddr = (NVIC_IRQ64_95_ENABLE + offset);
            *bit     = 1 << (irq - MX8MN_IRQ_FIRST - 64);
         }
-      else if (irq < NR_IRQS)
+      else if (irq < (MX8MN_IRQ_FIRST + 128))
         {
            *regaddr = (NVIC_IRQ96_127_ENABLE + offset);
            *bit     = 1 << (irq - MX8MN_IRQ_FIRST - 96);
+        }
+      else if (irq < (MX8MN_IRQ_FIRST + 160))
+        {
+           *regaddr = (NVIC_IRQ128_159_ENABLE + offset);
+           *bit     = 1 << (irq - MX8MN_IRQ_FIRST - 128);
+        }
+      else if (irq < NR_IRQS)
+        {
+           /* For secondary GPIO interrupts or others beyond 160,
+            * they don't have a corresponding NVIC register.
+            */
+           return ERROR;
         }
       else
         {

@@ -107,7 +107,7 @@
  */
 
 #define GPIO_PIN_SHIFT         (16)      /* Bits 16-20: GPIO pin number */
-#define GPIO_PIN_MASK          (15 << GPIO_PIN_SHIFT)
+#define GPIO_PIN_MASK          (31 << GPIO_PIN_SHIFT)
 #  define GPIO_PIN0            (0 << GPIO_PIN_SHIFT)  /* Pin  0 */
 #  define GPIO_PIN1            (1 << GPIO_PIN_SHIFT)  /* Pin  1 */
 #  define GPIO_PIN2            (2 << GPIO_PIN_SHIFT)  /* Pin  2 */

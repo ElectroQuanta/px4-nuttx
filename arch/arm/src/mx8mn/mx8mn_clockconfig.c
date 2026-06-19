@@ -97,6 +97,7 @@ void mx8mn_clockconfig(void)
   mx8mn_ccm_gate_clock(CCM_SEC_DEBUG_CLK_GATE,  CLK_ALWAYS_NEEDED);
   mx8mn_ccm_gate_clock(CCM_UART4_CLK_GATE,      CLK_ALWAYS_NEEDED);
   mx8mn_ccm_gate_clock(CCM_MU_CLK_GATE,         CLK_ALWAYS_NEEDED);
+  mx8mn_ccm_gate_clock(CCM_GPIO1_CLK_GATE,      CLK_ALWAYS_NEEDED);
   mx8mn_ccm_gate_clock(CCM_GPIO5_CLK_GATE,      CLK_ALWAYS_NEEDED);
 
   /* Make sure that main buses are enabled (TODO to be tuned or adjust

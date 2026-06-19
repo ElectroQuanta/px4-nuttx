@@ -27,6 +27,7 @@
 #include <nuttx/config.h>
 
 #include "arm_internal.h"
+#include "hardware/mx8mn_ccm.h"
 #include "mx8mn_ccm.h"
 #include "mx8mn_clockconfig.h"
 #include "hardware/mx8mn_gpc.h"
@@ -96,26 +97,7 @@ void mx8mn_clockconfig(void)
   mx8mn_ccm_gate_clock(CCM_SEC_DEBUG_CLK_GATE,  CLK_ALWAYS_NEEDED);
   mx8mn_ccm_gate_clock(CCM_UART4_CLK_GATE,      CLK_ALWAYS_NEEDED);
   mx8mn_ccm_gate_clock(CCM_MU_CLK_GATE,         CLK_ALWAYS_NEEDED);
-
-  /* Enable I2C support */
-#ifdef CONFIG_MX8MN_I2C_DRIVER  
-#  ifdef CONFIG_MX8MN_I2C1
-  mx8mn_ccm_configure_clock(I2C1_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
-  mx8mn_ccm_gate_clock(CCM_I2C1_CLK_GATE, CLK_ALWAYS_NEEDED);
-#  endif
-#  ifdef CONFIG_MX8MN_I2C2
-  mx8mn_ccm_configure_clock(I2C2_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
-  mx8mn_ccm_gate_clock(CCM_I2C2_CLK_GATE, CLK_ALWAYS_NEEDED);
-#  endif
-#  ifdef CONFIG_MX8MN_I2C3
-  mx8mn_ccm_configure_clock(I2C3_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
-  mx8mn_ccm_gate_clock(CCM_I2C3_CLK_GATE, CLK_ALWAYS_NEEDED);
-#  endif
-#  ifdef CONFIG_MX8MN_I2C4
-  mx8mn_ccm_configure_clock(I2C4_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
-  mx8mn_ccm_gate_clock(CCM_I2C4_CLK_GATE, CLK_ALWAYS_NEEDED);
-#  endif
-#endif  
+  mx8mn_ccm_gate_clock(CCM_GPIO5_CLK_GATE,      CLK_ALWAYS_NEEDED);
 
   /* Make sure that main buses are enabled (TODO to be tuned or adjust
    * by configuration)
@@ -125,6 +107,32 @@ void mx8mn_clockconfig(void)
   mx8mn_ccm_enable_clock(AHB_CLK_ROOT);
   mx8mn_ccm_enable_clock(MAIN_AXI_CLK_ROOT);
   mx8mn_ccm_enable_clock(DRAM_ALT_CLK_ROOT);
+
+
+  /* Enable I2C support */
+#ifdef CONFIG_MX8MN_I2C_DRIVER  
+#  ifdef CONFIG_MX8MN_I2C1
+  mx8mn_ccm_configure_clock(I2C1_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
+  mx8mn_ccm_gate_clock(CCM_I2C1_CLK_GATE, CLK_ALWAYS_NEEDED);
+  mx8mn_ccm_enable_clock(I2C1_CLK_ROOT);
+#  endif
+#  ifdef CONFIG_MX8MN_I2C2
+  mx8mn_ccm_configure_clock(I2C2_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
+  mx8mn_ccm_gate_clock(CCM_I2C2_CLK_GATE, CLK_ALWAYS_NEEDED);
+  mx8mn_ccm_enable_clock(I2C2_CLK_ROOT);
+#  endif
+#  ifdef CONFIG_MX8MN_I2C3
+  mx8mn_ccm_configure_clock(I2C3_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
+  mx8mn_ccm_gate_clock(CCM_I2C3_CLK_GATE, CLK_ALWAYS_NEEDED);
+  mx8mn_ccm_enable_clock(I2C3_CLK_ROOT);
+#  endif
+#  ifdef CONFIG_MX8MN_I2C4
+  mx8mn_ccm_configure_clock(I2C4_CLK_ROOT, OSC_24M_REF_CLK, 1, 1);
+  mx8mn_ccm_gate_clock(CCM_I2C4_CLK_GATE, CLK_ALWAYS_NEEDED);
+  mx8mn_ccm_enable_clock(I2C4_CLK_ROOT);
+#  endif
+#endif  
+
 
   /* Power up the audiomix domain by M7 core. */
 
